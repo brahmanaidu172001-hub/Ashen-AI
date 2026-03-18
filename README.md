@@ -24,4 +24,4 @@ when everything else has failed to move someone.
 [Live on ChatGPT →](https://chatgpt.com/g/g-693e593043ac8191a77d209b0780cc7b-ashen)
 
 ## Documentation
-Full architecture in ASHEN_v4.0_FINAL.md
+Full architecture in ASHEN_v4.0_Master_Architecture.md
