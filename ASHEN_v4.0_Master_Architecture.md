@@ -641,4 +641,4 @@ When resistance drops — **motion begins.**
 *AI Product Analyst | Creator, Ashen Decision Intelligence System*
 *Built on original research into human performance, behavioral AI, and*
 *cross-cultural decision intelligence.*
-*github.com/[yourusername]/ashen-ai*
+*github.com/brahmanaidu172001-hub/ashen-ai*
