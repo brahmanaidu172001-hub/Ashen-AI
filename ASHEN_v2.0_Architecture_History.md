@@ -288,4 +288,4 @@ When resistance drops — **motion begins.**
 
 *ASHEN v2.0 — Designed and authored by Brahma Naidu Darapaneni*
 *AI Product Analyst | Creator, Ashen Decision Intelligence System*
-*github.com/[yourusername]/ashen-ai*
+*github.com/brahmanaidu172001-hub/ashen-ai*
