@@ -1,0 +1,1290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ashen — AI That Tells You The Truth</title>
+<meta name="description" content="Ashen is an AI-powered decision intelligence system built on 11 human performance frameworks, 9 original doctrines, and a 6-stage adaptive response engine.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --yellow: #E8FF47;
+    --black: #080808;
+    --dark: #0F0F0F;
+    --card: #111111;
+    --border: #1E1E1E;
+    --muted: #444444;
+    --text: #CCCCCC;
+    --white: #F0F0F0;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    line-height: 1.6;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* CUSTOM CURSOR */
+  .cursor {
+    position: fixed;
+    width: 10px;
+    height: 10px;
+    background: var(--yellow);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: transform 0.1s ease;
+  }
+  .cursor-ring {
+    position: fixed;
+    width: 36px;
+    height: 36px;
+    border: 1px solid var(--yellow);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%, -50%);
+    transition: all 0.15s ease;
+    opacity: 0.5;
+  }
+
+  /* NOISE OVERLAY */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.4;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 24px 48px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.3s, background 0.3s;
+  }
+  nav.scrolled {
+    background: rgba(8,8,8,0.95);
+    border-color: var(--border);
+    backdrop-filter: blur(12px);
+  }
+  .nav-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    color: var(--yellow);
+    letter-spacing: 3px;
+    text-decoration: none;
+  }
+  .nav-links {
+    display: flex;
+    gap: 40px;
+    list-style: none;
+  }
+  .nav-links a {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--yellow); }
+  .nav-cta {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--black);
+    background: var(--yellow);
+    padding: 10px 24px;
+    text-decoration: none;
+    transition: opacity 0.2s;
+  }
+  .nav-cta:hover { opacity: 0.85; }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0 48px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(232,255,71,0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(232,255,71,0.02) 1px, transparent 1px);
+    background-size: 80px 80px;
+    animation: gridShift 20s linear infinite;
+  }
+  @keyframes gridShift {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(80px); }
+  }
+
+  #neuralCanvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    opacity: 0.7;
+  }
+
+  .hero-glow {
+    position: absolute;
+    width: 700px;
+    height: 700px;
+    background: radial-gradient(circle, rgba(232,255,71,0.06) 0%, transparent 70%);
+    top: 50%;
+    right: 5%;
+    transform: translateY(-50%);
+    animation: glowPulse 4s ease-in-out infinite;
+    pointer-events: none;
+  }
+  @keyframes glowPulse {
+    0%, 100% { opacity: 0.5; transform: translateY(-50%) scale(1); }
+    50% { opacity: 1; transform: translateY(-50%) scale(1.08); }
+  }
+
+  /* SOCIAL PROOF BAR */
+  .proof-bar {
+    background: var(--dark);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 20px 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 60px;
+    overflow: hidden;
+  }
+  .proof-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-shrink: 0;
+  }
+  .proof-quote {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1px;
+    color: var(--muted);
+    font-style: italic;
+  }
+  .proof-quote em {
+    color: var(--yellow);
+    font-style: normal;
+  }
+  .proof-divider {
+    width: 1px;
+    height: 28px;
+    background: var(--border);
+    flex-shrink: 0;
+  }
+
+  /* ARCH CARD GLOW UPGRADE */
+  .arch-card {
+    background: var(--card);
+    padding: 40px;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.4s, box-shadow 0.4s;
+  }
+  .arch-card:hover {
+    background: #141414;
+    box-shadow: inset 0 0 60px rgba(232,255,71,0.04);
+  }
+  .arch-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--yellow);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.5s ease;
+  }
+  .arch-card:hover::before { transform: scaleX(1); }
+  .arch-card-glow {
+    position: absolute;
+    top: -40px;
+    left: -40px;
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, rgba(232,255,71,0.08) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity 0.4s;
+    pointer-events: none;
+  }
+  .arch-card:hover .arch-card-glow { opacity: 1; }
+
+  .hero-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--yellow);
+    margin-bottom: 32px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.2s forwards;
+  }
+
+  .hero-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(80px, 12vw, 200px);
+    line-height: 0.9;
+    color: var(--white);
+    margin-bottom: 0;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.4s forwards;
+  }
+  .hero-title span {
+    color: var(--yellow);
+    display: block;
+  }
+
+  .hero-sub {
+    font-size: 18px;
+    color: var(--muted);
+    max-width: 520px;
+    margin-top: 40px;
+    line-height: 1.7;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.6s forwards;
+  }
+  .hero-sub strong { color: var(--text); font-weight: 400; }
+
+  .hero-actions {
+    display: flex;
+    gap: 16px;
+    margin-top: 48px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.8s forwards;
+  }
+
+  .btn-primary {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--black);
+    background: var(--yellow);
+    padding: 18px 40px;
+    text-decoration: none;
+    display: inline-block;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s;
+  }
+  .btn-primary::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.1);
+    transform: translateX(-100%);
+    transition: transform 0.3s;
+  }
+  .btn-primary:hover { transform: translateY(-2px); }
+  .btn-primary:hover::after { transform: translateX(0); }
+
+  .btn-secondary {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--yellow);
+    background: transparent;
+    border: 1px solid var(--border);
+    padding: 18px 40px;
+    text-decoration: none;
+    display: inline-block;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .btn-secondary:hover {
+    border-color: var(--yellow);
+    transform: translateY(-2px);
+  }
+
+  .hero-scroll {
+    position: absolute;
+    bottom: 48px;
+    left: 48px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 1.2s forwards;
+  }
+  .hero-scroll span {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .scroll-line {
+    width: 40px;
+    height: 1px;
+    background: var(--muted);
+    position: relative;
+    overflow: hidden;
+  }
+  .scroll-line::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--yellow);
+    animation: scrollAnim 2s ease-in-out infinite;
+  }
+  @keyframes scrollAnim {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(200%); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* TICKER */
+  .ticker {
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 0;
+    overflow: hidden;
+    background: var(--dark);
+  }
+  .ticker-inner {
+    display: flex;
+    gap: 0;
+    animation: tickerMove 30s linear infinite;
+    white-space: nowrap;
+  }
+  .ticker-item {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 0 40px;
+    flex-shrink: 0;
+  }
+  .ticker-item span { color: var(--yellow); margin-right: 40px; }
+  @keyframes tickerMove {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  /* SECTIONS */
+  section {
+    padding: 120px 48px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--yellow);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .section-label::before {
+    content: '';
+    width: 24px;
+    height: 1px;
+    background: var(--yellow);
+  }
+
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(48px, 6vw, 96px);
+    line-height: 0.95;
+    color: var(--white);
+    margin-bottom: 24px;
+  }
+  .section-title em {
+    color: var(--yellow);
+    font-style: normal;
+  }
+
+  /* OATH SECTION */
+  .oath-section {
+    padding: 120px 48px;
+    background: var(--dark);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    width: 100%;
+    max-width: 100%;
+  }
+  .oath-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  .oath-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    margin-top: 64px;
+    align-items: start;
+  }
+  .oath-statement {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(36px, 4vw, 64px);
+    line-height: 1.1;
+    color: var(--white);
+  }
+  .oath-statement em {
+    color: var(--yellow);
+    font-style: normal;
+  }
+  .oath-items {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .oath-item {
+    padding: 24px 0;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .oath-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--yellow);
+    padding-top: 3px;
+    flex-shrink: 0;
+  }
+  .oath-text {
+    font-size: 15px;
+    color: var(--text);
+    line-height: 1.6;
+  }
+  .oath-text strong { color: var(--white); font-weight: 500; }
+
+  /* ARCHITECTURE */
+  .arch-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+    margin-top: 64px;
+  }
+  .arch-card {
+    background: var(--card);
+    padding: 40px;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.3s;
+  }
+  .arch-card:hover { background: #161616; }
+  .arch-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--yellow);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s ease;
+  }
+  .arch-card:hover::before { transform: scaleX(1); }
+  .arch-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 72px;
+    color: var(--yellow);
+    line-height: 1;
+    margin-bottom: 16px;
+    transition: color 0.3s;
+    opacity: 0.85;
+  }
+  .arch-card:hover .arch-num { color: var(--yellow); opacity: 1; }
+  .arch-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    color: var(--white);
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+  }
+  .arch-desc {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+  .arch-tag {
+    display: inline-block;
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--yellow);
+    border: 1px solid rgba(232,255,71,0.2);
+    padding: 4px 10px;
+    margin-top: 16px;
+  }
+
+  /* DOCTRINES */
+  .doctrines-list {
+    margin-top: 64px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .doctrine-item {
+    display: grid;
+    grid-template-columns: 48px 1fr auto;
+    gap: 32px;
+    align-items: center;
+    padding: 28px 0;
+    border-bottom: 1px solid var(--border);
+    cursor: default;
+    transition: padding 0.3s;
+  }
+  .doctrine-item:hover { padding-left: 16px; }
+  .doctrine-item:first-child { border-top: 1px solid var(--border); }
+  .doctrine-n {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--muted);
+  }
+  .doctrine-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    color: var(--white);
+    letter-spacing: 1px;
+    transition: color 0.2s;
+  }
+  .doctrine-item:hover .doctrine-name { color: var(--yellow); }
+  .doctrine-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-align: right;
+  }
+
+  /* THE 11 MINDS */
+  .minds-scroll {
+    margin-top: 64px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--border);
+  }
+  .mind-card {
+    background: var(--card);
+    padding: 32px;
+    position: relative;
+    overflow: hidden;
+    cursor: default;
+  }
+  .mind-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 0;
+    background: var(--yellow);
+    transition: height 0.3s;
+  }
+  .mind-card:hover::after { height: 2px; }
+  .mind-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    color: var(--white);
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+  }
+  .mind-source {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--yellow);
+    margin-bottom: 12px;
+  }
+  .mind-desc {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  /* LIVE SECTION */
+  .live-section {
+    padding: 120px 48px;
+    background: var(--yellow);
+    width: 100%;
+    max-width: 100%;
+  }
+  .live-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+  }
+  .live-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(56px, 7vw, 120px);
+    line-height: 0.9;
+    color: var(--black);
+  }
+  .live-sub {
+    font-size: 16px;
+    color: rgba(0,0,0,0.6);
+    margin-top: 24px;
+    line-height: 1.7;
+    max-width: 440px;
+  }
+  .live-cta {
+    display: inline-block;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--yellow);
+    background: var(--black);
+    padding: 20px 48px;
+    text-decoration: none;
+    margin-top: 40px;
+    transition: transform 0.2s;
+  }
+  .live-cta:hover { transform: translateY(-3px); }
+  .live-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    background: rgba(0,0,0,0.15);
+  }
+  .live-stat {
+    background: rgba(0,0,0,0.08);
+    padding: 40px;
+  }
+  .live-stat-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 64px;
+    color: var(--black);
+    line-height: 1;
+  }
+  .live-stat-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(0,0,0,0.5);
+    margin-top: 8px;
+  }
+
+  /* RESEARCH */
+  .research-grid {
+    margin-top: 64px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--border);
+  }
+  .research-card {
+    background: var(--card);
+    padding: 48px;
+    text-decoration: none;
+    display: block;
+    transition: background 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .research-card:hover { background: #141414; }
+  .research-card::before {
+    content: '↗';
+    position: absolute;
+    top: 32px;
+    right: 32px;
+    font-size: 20px;
+    color: var(--border);
+    transition: color 0.3s, transform 0.3s;
+  }
+  .research-card:hover::before {
+    color: var(--yellow);
+    transform: translate(4px, -4px);
+  }
+  .research-type {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--yellow);
+    margin-bottom: 16px;
+  }
+  .research-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px;
+    color: var(--white);
+    letter-spacing: 1px;
+    line-height: 1.1;
+    margin-bottom: 16px;
+  }
+  .research-desc {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 60px 48px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    background: var(--dark);
+  }
+  .footer-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 48px;
+    color: var(--yellow);
+    letter-spacing: 4px;
+    line-height: 1;
+  }
+  .footer-sub {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 8px;
+  }
+  .footer-right {
+    text-align: right;
+  }
+  .footer-author {
+    font-size: 14px;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+  .footer-author strong { color: var(--text); font-weight: 400; }
+  .footer-links {
+    display: flex;
+    gap: 24px;
+    justify-content: flex-end;
+    margin-top: 16px;
+  }
+  .footer-links a {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .footer-links a:hover { color: var(--yellow); }
+
+  /* SCROLL REVEAL */
+  .reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  @media (max-width: 900px) {
+    nav { padding: 20px 24px; }
+    .nav-links { display: none; }
+    .hero { padding: 0 24px; }
+    section { padding: 80px 24px; }
+    .oath-grid { grid-template-columns: 1fr; gap: 40px; }
+    .arch-grid { grid-template-columns: 1fr; }
+    .minds-scroll { grid-template-columns: 1fr 1fr; }
+    .live-inner { grid-template-columns: 1fr; gap: 40px; }
+    .research-grid { grid-template-columns: 1fr; }
+    footer { flex-direction: column; gap: 32px; align-items: flex-start; }
+    .footer-right { text-align: left; }
+    .footer-links { justify-content: flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="#" class="nav-logo">ASHEN</a>
+  <ul class="nav-links">
+    <li><a href="#architecture">Architecture</a></li>
+    <li><a href="#doctrines">Doctrines</a></li>
+    <li><a href="#minds">The 11 Minds</a></li>
+
+  </ul>
+  <a href="https://chatgpt.com/g/g-693e593043ac8191a77d209b0780cc7b-ashen" target="_blank" class="nav-cta">Try Ashen →</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <canvas id="neuralCanvas"></canvas>
+  <div class="hero-glow"></div>
+
+  <p class="hero-label">Decision Intelligence System · v4.0</p>
+  <h1 class="hero-title">
+    AI THAT<br>
+    <span>TELLS YOU</span>
+    THE TRUTH
+  </h1>
+  <p class="hero-sub">
+    Ashen doesn't validate you. It doesn't tell you what you want to hear.<br>
+    <strong>It removes what blocks you and returns you to motion.</strong>
+  </p>
+  <div class="hero-actions">
+    <a href="https://chatgpt.com/g/g-693e593043ac8191a77d209b0780cc7b-ashen" target="_blank" class="btn-primary">Try Ashen Free →</a>
+    <a href="https://github.com/brahmanaidu172001/Ashen-AI" target="_blank" class="btn-secondary">Read the Research</a>
+  </div>
+
+  <div class="hero-scroll">
+    <div class="scroll-line"></div>
+    <span>Scroll</span>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-inner">
+    <div class="ticker-item"><span>★</span> 11 Integrated Minds</div>
+    <div class="ticker-item"><span>★</span> 33-Layer Reasoning Brain</div>
+    <div class="ticker-item"><span>★</span> 9 Original Doctrines</div>
+    <div class="ticker-item"><span>★</span> 6-Stage Response Engine</div>
+    <div class="ticker-item"><span>★</span> State Detection Protocol</div>
+    <div class="ticker-item"><span>★</span> Mental Health Safety Layer</div>
+    <div class="ticker-item"><span>★</span> 11 Integrated Minds</div>
+    <div class="ticker-item"><span>★</span> 33-Layer Reasoning Brain</div>
+    <div class="ticker-item"><span>★</span> 9 Original Doctrines</div>
+    <div class="ticker-item"><span>★</span> 6-Stage Response Engine</div>
+    <div class="ticker-item"><span>★</span> State Detection Protocol</div>
+    <div class="ticker-item"><span>★</span> Mental Health Safety Layer</div>
+  </div>
+</div>
+
+<!-- SOCIAL PROOF BAR -->
+<div class="proof-bar">
+  <div class="proof-item">
+    <span class="proof-quote">"The only AI that told me what I <em>needed</em> to hear."</span>
+  </div>
+  <div class="proof-divider"></div>
+  <div class="proof-item">
+    <span class="proof-quote">"It doesn't motivate you. It <em>removes your excuses.</em>"</span>
+  </div>
+  <div class="proof-divider"></div>
+  <div class="proof-item">
+    <span class="proof-quote">"Felt like talking to someone who actually <em>cared enough to be honest.</em>"</span>
+  </div>
+</div>
+<div class="oath-section">
+  <div class="oath-inner">
+    <p class="section-label reveal">The Ashen Oath</p>
+    <div class="oath-grid">
+      <div class="oath-statement reveal">
+        ASHEN WILL NEVER<br>
+        TELL YOU WHAT<br>
+        YOU <em>WANT</em><br>
+        TO HEAR.
+      </div>
+      <div class="oath-items reveal">
+        <div class="oath-item">
+          <span class="oath-num">01</span>
+          <p class="oath-text">Ashen will <strong>never flatter you.</strong></p>
+        </div>
+        <div class="oath-item">
+          <span class="oath-num">02</span>
+          <p class="oath-text">Ashen will <strong>never perform empathy</strong> to maintain your comfort.</p>
+        </div>
+        <div class="oath-item">
+          <span class="oath-num">03</span>
+          <p class="oath-text">Ashen will never tell you what you <strong>want to hear</strong> when what you need to hear is harder.</p>
+        </div>
+        <div class="oath-item">
+          <span class="oath-num">04</span>
+          <p class="oath-text">Ashen will never allow you to remain static and frame that <strong>stasis as healing.</strong></p>
+        </div>
+        <div class="oath-item">
+          <span class="oath-num">05</span>
+          <p class="oath-text">Ashen raises the standard until <strong>motivation becomes structurally irrelevant.</strong></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ARCHITECTURE -->
+<section id="architecture">
+  <p class="section-label reveal">System Architecture</p>
+  <h2 class="section-title reveal">BUILT<br><em>DIFFERENT.</em></h2>
+  <div class="arch-grid reveal">
+    <div class="arch-card">
+      <div class="arch-card-glow"></div>
+      <div class="arch-num">11</div>
+      <h3 class="arch-title">Integrated Minds</h3>
+      <p class="arch-desc">Historical and contemporary human performance frameworks embedded into the system's silent reasoning layer. Marcus Aurelius. Kobe Bryant. Harriet Tubman. Running simultaneously on every response.</p>
+      <span class="arch-tag">Behavioral Layer</span>
+    </div>
+    <div class="arch-card">
+      <div class="arch-card-glow"></div>
+      <div class="arch-num">33</div>
+      <h3 class="arch-title">Silent Reasoning Layers</h3>
+      <p class="arch-desc">The user never sees the 33 layers working. They only see the output — direction, not data. Each layer governs a specific dimension of human psychology, performance, and decision-making.</p>
+      <span class="arch-tag">Intelligence Layer</span>
+    </div>
+    <div class="arch-card">
+      <div class="arch-card-glow"></div>
+      <div class="arch-num">09</div>
+      <h3 class="arch-title">Original Doctrines</h3>
+      <p class="arch-desc">Nine principles that govern every response. Including the original Contrast Principle — named and formalized by Ashen's creator. Not motivational guidelines. Operational directives.</p>
+      <span class="arch-tag">Doctrine Layer</span>
+    </div>
+    <div class="arch-card">
+      <div class="arch-card-glow"></div>
+      <div class="arch-num">06</div>
+      <h3 class="arch-title">Stage Response Engine</h3>
+      <p class="arch-desc">Acknowledge → Stabilize → Name Root → Reframe → One Action → Closure. Every response follows this invariant sequence. Stages expand or compress based on detected state.</p>
+      <span class="arch-tag">Response Layer</span>
+    </div>
+    <div class="arch-card">
+      <div class="arch-card-glow"></div>
+      <div class="arch-num">04</div>
+      <h3 class="arch-title">State Detection States</h3>
+      <p class="arch-desc">Before any output, Ashen classifies your current state. Crisis. Stagnation. Momentum. Clarity-Seeking. Each state routes the response engine differently. The same information, differently framed, produces different outcomes.</p>
+      <span class="arch-tag">Detection Layer</span>
+    </div>
+    <div class="arch-card">
+      <div class="arch-card-glow"></div>
+      <div class="arch-num">01</div>
+      <h3 class="arch-title">Action Per Response</h3>
+      <p class="arch-desc">Not a list. Not three options. Not a comprehensive summary. One action. The single most important thing to do in the next 30 minutes. That's all. Everything else is noise.</p>
+      <span class="arch-tag">Output Layer</span>
+    </div>
+  </div>
+</section>
+
+<!-- DOCTRINES -->
+<section id="doctrines">
+  <p class="section-label reveal">The 9 Doctrines</p>
+  <h2 class="section-title reveal">OPERATIONAL<br><em>DIRECTIVES.</em></h2>
+  <div class="doctrines-list reveal">
+    <div class="doctrine-item">
+      <span class="doctrine-n">D-01</span>
+      <span class="doctrine-name">Alignment Over Force</span>
+      <span class="doctrine-tag">Internal Resistance</span>
+    </div>
+    <div class="doctrine-item">
+      <span class="doctrine-n">D-02</span>
+      <span class="doctrine-name">Identity Through Action</span>
+      <span class="doctrine-tag">Behavioral Identity</span>
+    </div>
+    <div class="doctrine-item">
+      <span class="doctrine-n">D-03</span>
+      <span class="doctrine-name">Energy Determines Reality</span>
+      <span class="doctrine-tag">State Management</span>
+    </div>
+    <div class="doctrine-item">
+      <span class="doctrine-n">D-04</span>
+      <span class="doctrine-name">Discipline Is Mechanical</span>
+      <span class="doctrine-tag">Systems Design</span>
+    </div>
+    <div class="doctrine-item">
+      <span class="doctrine-n">D-05</span>
+      <span class="doctrine-name">Discomfort Is Currency</span>
+      <span class="doctrine-tag">Capacity Expansion</span>
+    </div>
+    <div class="doctrine-item">
+      <span class="doctrine-n">D-06</span>
+      <span class="doctrine-name">Environment Beats Willpower</span>
+      <span class="doctrine-tag">Environmental Design</span>
+    </div>
+    <div class="doctrine-item">
+      <span class="doctrine-n">D-07</span>
+      <span class="doctrine-name">Reinvention Needs Timelines</span>
+      <span class="doctrine-tag">Temporal Constraint</span>
+    </div>
+    <div class="doctrine-item">
+      <span class="doctrine-n">D-08</span>
+      <span class="doctrine-name">Meaning Over Mood</span>
+      <span class="doctrine-tag">Purpose Architecture</span>
+    </div>
+    <div class="doctrine-item">
+      <span class="doctrine-n">D-09</span>
+      <span class="doctrine-name">The Contrast Principle ✦ Original</span>
+      <span class="doctrine-tag">Decision Clarity</span>
+    </div>
+  </div>
+</section>
+
+<!-- THE 11 MINDS -->
+<section id="minds">
+  <p class="section-label reveal">The 11 Minds</p>
+  <h2 class="section-title reveal">RUNNING<br><em>SILENTLY.</em></h2>
+  <div class="minds-scroll reveal">
+    <div class="mind-card">
+      <div class="mind-name">The Stoic Mind</div>
+      <div class="mind-source">Marcus Aurelius</div>
+      <div class="mind-desc">Control division. Obstacle reframing. Action without attachment to outcome.</div>
+    </div>
+    <div class="mind-card">
+      <div class="mind-name">The Mamba Mind</div>
+      <div class="mind-source">Kobe Bryant</div>
+      <div class="mind-desc">Daily obsession. Zero sentimentality. The standard is non-negotiable.</div>
+    </div>
+    <div class="mind-card">
+      <div class="mind-name">The Last Shot Mind</div>
+      <div class="mind-source">Michael Jordan</div>
+      <div class="mind-desc">Preparation-based confidence. Pressure as invitation. Upward elevation.</div>
+    </div>
+    <div class="mind-card">
+      <div class="mind-name">The Conqueror Mind</div>
+      <div class="mind-source">Alexander + Genghis</div>
+      <div class="mind-desc">Unlimited vision. Adaptive dominance. Systems over dependence.</div>
+    </div>
+    <div class="mind-card">
+      <div class="mind-name">The Builder Mind</div>
+      <div class="mind-source">Steve Jobs</div>
+      <div class="mind-desc">Connect the dots backward. Ruthless simplicity. Permanent hunger.</div>
+    </div>
+    <div class="mind-card">
+      <div class="mind-name">The Commander Mind</div>
+      <div class="mind-source">Caesar + Napoleon</div>
+      <div class="mind-desc">Speed of decision. Meritocracy. Irreversible commitment architecture.</div>
+    </div>
+    <div class="mind-card">
+      <div class="mind-name">The Rebel Mind</div>
+      <div class="mind-source">Spartacus</div>
+      <div class="mind-desc">Current condition is not final. Refusal changes history.</div>
+    </div>
+    <div class="mind-card">
+      <div class="mind-name">The Iron Mind</div>
+      <div class="mind-source">David Goggins</div>
+      <div class="mind-desc">40% Rule. Deliberate discomfort. Total accountability. Silent output.</div>
+    </div>
+    <div class="mind-card">
+      <div class="mind-name">Peak Performance</div>
+      <div class="mind-source">Robbins + Clear</div>
+      <div class="mind-desc">State before strategy. Identity precedes behavior. 1% compounds.</div>
+    </div>
+    <div class="mind-card">
+      <div class="mind-name">The Unbreakable Mind</div>
+      <div class="mind-source">Tubman · Curie · Kahlo · Malala</div>
+      <div class="mind-desc">Execute under threat. Work is the argument. Pain is material.</div>
+    </div>
+    <div class="mind-card">
+      <div class="mind-name">The Hunger Mind</div>
+      <div class="mind-source">Those Who Built From Nothing</div>
+      <div class="mind-desc">Scarcity sharpens. Burn boats. Doubt is fuel. Build in silence.</div>
+    </div>
+    <div class="mind-card" style="background: rgba(232,255,71,0.03); display:flex; align-items:center; justify-content:center;">
+      <div style="text-align:center;">
+        <div style="font-family:'Bebas Neue',sans-serif; font-size:48px; color:var(--border);">+</div>
+        <div style="font-family:'DM Mono',monospace; font-size:9px; letter-spacing:2px; color:var(--muted); text-transform:uppercase; margin-top:8px;">Integration Layer</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LIVE CTA -->
+<div class="live-section">
+  <div class="live-inner">
+    <div>
+      <h2 class="live-title">LIVE.<br>FREE.<br>NOW.</h2>
+      <p class="live-sub">Ashen is live on ChatGPT. No signup. No waitlist. Just tell it what's blocking you. It will tell you the truth.</p>
+      <a href="https://chatgpt.com/g/g-693e593043ac8191a77d209b0780cc7b-ashen" target="_blank" class="live-cta">Open Ashen →</a>
+    </div>
+    <div class="live-stats">
+      <div class="live-stat">
+        <div class="live-stat-num">11</div>
+        <div class="live-stat-label">Integrated Minds</div>
+      </div>
+      <div class="live-stat">
+        <div class="live-stat-num">33</div>
+        <div class="live-stat-label">Silent Layers</div>
+      </div>
+      <div class="live-stat">
+        <div class="live-stat-num">9</div>
+        <div class="live-stat-label">Original Doctrines</div>
+      </div>
+      <div class="live-stat">
+        <div class="live-stat-num">01</div>
+        <div class="live-stat-label">Action Per Response</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- FOOTER -->
+<footer>
+  <div>
+    <div class="footer-logo">ASHEN</div>
+    <div class="footer-sub">Decision Intelligence System · v4.0 · 2026</div>
+  </div>
+  <div class="footer-right">
+    <div class="footer-author">Created by <strong>Brahma Naidu Darapaneni</strong></div>
+    <div class="footer-author">AI Product Analyst · Applied AI for Human Performance</div>
+    <div class="footer-links">
+      <a href="https://chatgpt.com/g/g-693e593043ac8191a77d209b0780cc7b-ashen" target="_blank">Try Ashen</a>
+      <a href="https://github.com/brahmanaidu172001/Ashen-AI" target="_blank">GitHub</a>
+      <a href="https://linkedin.com/in/naidu-b-darapaneni-4629963b6" target="_blank">LinkedIn</a>
+      <a href="https://medium.com/@brahmanaidu8888" target="_blank">Articles</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Neural network canvas animation
+  const canvas = document.getElementById('neuralCanvas');
+  const ctx = canvas.getContext('2d');
+  let nodes = [];
+  let W, H;
+
+  function resize() {
+    W = canvas.width = canvas.offsetWidth;
+    H = canvas.height = canvas.offsetHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  // Create nodes
+  for (let i = 0; i < 55; i++) {
+    nodes.push({
+      x: Math.random() * W,
+      y: Math.random() * H,
+      vx: (Math.random() - 0.5) * 0.4,
+      vy: (Math.random() - 0.5) * 0.4,
+      r: Math.random() * 2.5 + 1,
+      pulse: Math.random() * Math.PI * 2,
+    });
+  }
+
+  function drawNeural() {
+    ctx.clearRect(0, 0, W, H);
+    nodes.forEach(n => {
+      n.x += n.vx;
+      n.y += n.vy;
+      n.pulse += 0.02;
+      if (n.x < 0 || n.x > W) n.vx *= -1;
+      if (n.y < 0 || n.y > H) n.vy *= -1;
+    });
+
+    // Draw connections
+    for (let i = 0; i < nodes.length; i++) {
+      for (let j = i + 1; j < nodes.length; j++) {
+        const dx = nodes[i].x - nodes[j].x;
+        const dy = nodes[i].y - nodes[j].y;
+        const dist = Math.sqrt(dx*dx + dy*dy);
+        if (dist < 160) {
+          const alpha = (1 - dist / 160) * 0.18;
+          ctx.beginPath();
+          ctx.strokeStyle = `rgba(232,255,71,${alpha})`;
+          ctx.lineWidth = 0.8;
+          ctx.moveTo(nodes[i].x, nodes[i].y);
+          ctx.lineTo(nodes[j].x, nodes[j].y);
+          ctx.stroke();
+        }
+      }
+    }
+
+    // Draw nodes
+    nodes.forEach(n => {
+      const glow = 0.4 + 0.3 * Math.sin(n.pulse);
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(232,255,71,${glow})`;
+      ctx.fill();
+    });
+
+    requestAnimationFrame(drawNeural);
+  }
+  drawNeural();
+
+  // Custom cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+  function animateCursor() {
+    cursor.style.left = mx + 'px';
+    cursor.style.top = my + 'px';
+    rx += (mx - rx) * 0.12;
+    ry += (my - ry) *.12;
+    ring.style.left = rx + 'px';
+    ring.style.top = ry + 'px';
+    requestAnimationFrame(animateCursor);
+  }
+  animateCursor();
+
+  document.querySelectorAll('a').forEach(a => {
+    a.addEventListener('mouseenter', () => {
+      cursor.style.transform = 'translate(-50%,-50%) scale(2.5)';
+      ring.style.transform = 'translate(-50%,-50%) scale(0.5)';
+      ring.style.opacity = '1';
+    });
+    a.addEventListener('mouseleave', () => {
+      cursor.style.transform = 'translate(-50%,-50%) scale(1)';
+      ring.style.transform = 'translate(-50%,-50%) scale(1)';
+      ring.style.opacity = '0.5';
+    });
+  });
+
+  // Nav scroll
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 60);
+  });
+
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
